@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EuroMillionen Zahlen Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        
+        .numbers-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-label {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .numbers-display {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            min-height: 50px;
+            align-items: center;
+        }
+        
+        .number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .star {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+        
+        .btn-reset {
+            background: #f0f0f0;
+            color: #333;
+            flex: 1;
+        }
+        
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+        
+        .info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 EuroMillionen</h1>
+        <p class="subtitle">Zufällige Zahlen Generator</p>
+        
+        <div class="numbers-section">
+            <div class="section-label">5 Zahlen (1–50)</div>
+            <div class="numbers-display" id="mainNumbers"></div>
+        </div>
+        
+        <div class="numbers-section">
+            <div class="section-label">2 Sterne (1–12)</div>
+            <div class="numbers-display" id="stars"></div>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn-generate" onclick="generate()">Generieren</button>
+            <button class="btn-reset" onclick="reset()">Zurücksetzen</button>
+        </div>
+        
+        <div class="info">
+            <strong>Wie es funktioniert:</strong><br>
+            • 5 Zahlen aus 1–50 (ohne Wiederholung)<br>
+            • 2 Sterne aus 1–12 (ohne Wiederholung)<br>
+            <br>
+            <em>Viel Glück! 🍀</em>
+        </div>
+    </div>
+    
+    <script>
+        function generateUniqueNumbers(min, max, count) {
+            const numbers = [];
+            const available = Array.from({ length: max - min + 1 }, (_, i) => min + i);
+            
+            for (let i = 0; i < count; i++) {
+                const randomIndex = Math.floor(Math.random() * available.length);
+                numbers.push(available[randomIndex]);
+                available.splice(randomIndex, 1);
+            }
+            
+            return numbers.sort((a, b) => a - b);
+        }
+        
+        function generate() {
+            const mainNumbers = generateUniqueNumbers(1, 50, 5);
+            const stars = generateUniqueNumbers(1, 12, 2);
+            
+            // Display main numbers
+            const mainDisplay = document.getElementById('mainNumbers');
+            mainDisplay.innerHTML = mainNumbers.map(n => `<div class="number">${n}</div>`).join('');
+            
+            // Display stars
+            const starsDisplay = document.getElementById('stars');
+            starsDisplay.innerHTML = stars.map(s => `<div class="star">⭐<span style="position: absolute; font-size: 18px; font-weight: bold;">${s}</span></div>`).join('');
+        }
+        
+        function reset() {
+            document.getElementById('mainNumbers').innerHTML = '';
+            document.getElementById('stars').innerHTML = '';
+        }
+        
+        // Initial state
+        reset();
+    </script>
+</body>
+</html>
