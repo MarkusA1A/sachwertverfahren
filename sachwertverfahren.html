@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sachwertverfahren - Einfamilienhaus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            color: #555;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        .results {
+            background: #f0f7ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .result-row:last-child {
+            border-bottom: none;
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 2px solid #667eea;
+            font-weight: bold;
+            font-size: 16px;
+            color: #667eea;
+        }
+        
+        .result-label {
+            color: #555;
+        }
+        
+        .result-value {
+            color: #333;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .reset-btn {
+            background: #999;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .reset-btn:hover {
+            box-shadow: 0 10px 20px rgba(153, 153, 153, 0.2);
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .info {
+            background: #e7f3ff;
+            color: #004085;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Sachwertverfahren</h1>
+        <p class="subtitle">Wertermittlung für Einfamilienhäuser nach deutschem Standard</p>
+        
+        <form id="form">
+            <div class="grid">
+                <!-- Gebäude -->
+                <div class="section">
+                    <h2>Gebäude</h2>
+                    
+                    <div class="form-group">
+                        <label for="wohnflaeche">Wohnfläche (m²)</label>
+                        <input type="number" id="wohnflaeche" placeholder="150" step="0.1" required>
+                        <div class="help-text">Nutzbare Wohnfläche nach WoFlV</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hk">Herstellungskosten (€/m²)</label>
+                        <input type="number" id="hk" placeholder="2000" step="10" required>
+                        <div class="help-text">Aktuelle Bau-/Herstellungskosten pro m²</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alter">Alter des Gebäudes (Jahre)</label>
+                        <input type="number" id="alter" placeholder="10" step="1" min="0" required>
+                        <div class="help-text">Seit Fertigstellung</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lebensdauer">Gesamtlebensdauer (Jahre)</label>
+                        <input type="number" id="lebensdauer" placeholder="80" step="1" min="1" required>
+                        <div class="help-text">Typisch 70-100 Jahre</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wertverhältnis">Wertverhältnis (%)</label>
+                        <input type="number" id="wertverhältnis" placeholder="100" step="1" min="0" max="100" required>
+                        <div class="help-text">100% = normaler Standard</div>
+                    </div>
+                </div>
+                
+                <!-- Grundstück -->
+                <div class="section">
+                    <h2>Grundstück</h2>
+                    
+                    <div class="form-group">
+                        <label for="grundfläche">Grundstücksfläche (m²)</label>
+                        <input type="number" id="grundfläche" placeholder="800" step="1" min="1" required>
+                        <div class="help-text">Gesamtfläche des Grundstücks</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bodenrichtwert">Bodenrichtwert (€/m²)</label>
+                        <input type="number" id="bodenrichtwert" placeholder="300" step="10" min="0" required>
+                        <div class="help-text">Amtlicher Richtwert für deine Region</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="makler">Maklergebühr (%)</label>
+                        <input type="number" id="makler" placeholder="0" step="0.5" min="0" max="100" required>
+                        <div class="help-text">Wird vom Grundstückswert abgezogen</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nebenkosten">Nebenkosten (%)</label>
+                        <input type="number" id="nebenkosten" placeholder="0" step="0.5" min="0" max="100" required>
+                        <div class="help-text">Notargebühren, Grundbuchgebühren, etc.</div>
+                    </div>
+                    
+                    <div class="info">
+                        💡 Den Bodenrichtwert findest du im Gutachterausschuss deiner Stadt/Gemeinde
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit">Berechnen</button>
+            <button type="reset" class="reset-btn">Zurücksetzen</button>
+        </form>
+        
+        <div id="results" style="display: none;">
+            <div class="results">
+                <div class="result-row">
+                    <span class="result-label">Gebäudewert (brutto)</span>
+                    <span class="result-value" id="gebaudewert-brutto">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Wertminderung (Alter)</span>
+                    <span class="result-value" id="wertminderung">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Gebäudewert (netto)</span>
+                    <span class="result-value" id="gebaudewert-netto">—</span>
+                </div>
+                
+                <div class="result-row">
+                    <span class="result-label">Grundstückswert (brutto)</span>
+                    <span class="result-value" id="grundstuckswert-brutto">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Makler & Nebenkosten</span>
+                    <span class="result-value" id="kosten">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Grundstückswert (netto)</span>
+                    <span class="result-value" id="grundstuckswert-netto">—</span>
+                </div>
+                
+                <div class="result-row">
+                    <span class="result-label">📊 SACHWERT (GESAMT)</span>
+                    <span class="result-value" id="sachwert">—</span>
+                </div>
+            </div>
+            
+            <div class="warning">
+                ⚠️ <strong>Hinweis:</strong> Diese Berechnung ist eine Schätzung. Für offizielle Wertermittlungen (Finanzamt, Bank) empfehlen wir einen Gutachter. Der Sachwert ist oft nur einer von mehreren Wertermittlungsmethoden (Vergleichswert, Ertragswert).
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('form');
+        const resultsDiv = document.getElementById('results');
+        
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Eingaben
+            const wohnflaeche = parseFloat(document.getElementById('wohnflaeche').value);
+            const hk = parseFloat(document.getElementById('hk').value);
+            const alter = parseFloat(document.getElementById('alter').value);
+            const lebensdauer = parseFloat(document.getElementById('lebensdauer').value);
+            const wertverhältnis = parseFloat(document.getElementById('wertverhältnis').value) / 100;
+            
+            const grundfläche = parseFloat(document.getElementById('grundfläche').value);
+            const bodenrichtwert = parseFloat(document.getElementById('bodenrichtwert').value);
+            const makler = parseFloat(document.getElementById('makler').value) / 100;
+            const nebenkosten = parseFloat(document.getElementById('nebenkosten').value) / 100;
+            
+            // Gebäudewert
+            const gebaudewertBrutto = wohnflaeche * hk * wertverhältnis;
+            const wertminderung = gebaudewertBrutto * (alter / lebensdauer);
+            const gebaudewertNetto = gebaudewertBrutto - wertminderung;
+            
+            // Grundstückswert
+            const grundstuckswertBrutto = grundfläche * bodenrichtwert;
+            const kosten = grundstuckswertBrutto * (makler + nebenkosten);
+            const grundstuckswertNetto = grundstuckswertBrutto - kosten;
+            
+            // Sachwert
+            const sachwert = gebaudewertNetto + grundstuckswertNetto;
+            
+            // Anzeigen
+            document.getElementById('gebaudewert-brutto').textContent = formatCurrency(gebaudewertBrutto);
+            document.getElementById('wertminderung').textContent = formatCurrency(wertminderung);
+            document.getElementById('gebaudewert-netto').textContent = formatCurrency(gebaudewertNetto);
+            
+            document.getElementById('grundstuckswert-brutto').textContent = formatCurrency(grundstuckswertBrutto);
+            document.getElementById('kosten').textContent = formatCurrency(kosten);
+            document.getElementById('grundstuckswert-netto').textContent = formatCurrency(grundstuckswertNetto);
+            
+            document.getElementById('sachwert').textContent = formatCurrency(sachwert);
+            
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        
+        // Default-Werte für schnelles Testen
+        window.addEventListener('load', () => {
+            document.getElementById('wohnflaeche').value = '150';
+            document.getElementById('hk').value = '2000';
+            document.getElementById('alter').value = '10';
+            document.getElementById('lebensdauer').value = '80';
+            document.getElementById('wertverhältnis').value = '100';
+            document.getElementById('grundfläche').value = '800';
+            document.getElementById('bodenrichtwert').value = '300';
+            document.getElementById('makler').value = '0';
+            document.getElementById('nebenkosten').value = '0';
+        });
+    </script>
+</body>
+</html>
